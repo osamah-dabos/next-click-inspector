@@ -1,0 +1,49 @@
+{
+  "name": "next-click-inspector",
+  "version": "1.0.0",
+  "description": "Click any element in your Next.js app to see the file, line and code that rendered it, and open it in your editor. Like the Nuxt DevTools inspector.",
+  "license": "MIT",
+  "author": "Osamah (https://github.com/osamah-dabos)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osamah-dabos/next-click-inspector.git"
+  },
+  "homepage": "https://github.com/osamah-dabos/next-click-inspector#readme",
+  "bugs": {
+    "url": "https://github.com/osamah-dabos/next-click-inspector/issues"
+  },
+  "main": "index.cjs",
+  "types": "index.d.ts",
+  "bin": {
+    "next-click-inspector": "cli.cjs"
+  },
+  "files": [
+    "index.cjs",
+    "index.d.ts",
+    "loader.cjs",
+    "overlay.js",
+    "server.cjs",
+    "cli.cjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "nextjs",
+    "next",
+    "inspector",
+    "devtools",
+    "click-to-component",
+    "open-in-editor",
+    "react"
+  ],
+  "engines": {
+    "node": ">=18.18"
+  },
+  "peerDependencies": {
+    "next": ">=14"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.26.0",
+    "launch-editor": "^2.9.1"
+  }
+}
