@@ -4,19 +4,17 @@
 // 2. In any file that renders <body> (root layout, pages/_document), injects the
 //    overlay script right before </body>, so you never mount anything yourself.
 // All insertions are inline, so line numbers in the compiled output never shift.
-const fs = require("node:fs");
 const path = require("node:path");
 const { parse } = require("@babel/parser");
 
 const ATTR = "data-insp";
-const OVERLAY = path.join(__dirname, "overlay.js");
 
+// An async external script, not an inline one: React 19 hoists and dedupes
+// <script async src>, while inline <script> tags in components trigger a
+// "Scripts inside React components are never executed" warning.
 function overlayTag(endpoint, token) {
-  const js =
-    `window.__DEV_INSPECTOR__=${JSON.stringify({ endpoint, token })};\n` +
-    fs.readFileSync(OVERLAY, "utf8");
-  const safe = js.replace(/<\/script/gi, "<\\/script");
-  return `<script data-dev-inspector="" dangerouslySetInnerHTML={{ __html: ${JSON.stringify(safe)} }} />`;
+  const src = `${endpoint}/overlay.js?token=${encodeURIComponent(token)}`;
+  return `<script data-dev-inspector="" async src=${JSON.stringify(src)} />`;
 }
 
 function walk(node, visit) {
@@ -62,7 +60,6 @@ module.exports = function inspectorLoader(source) {
       node.openingElement.name.type === "JSXIdentifier" &&
       node.openingElement.name.name === "body"
     ) {
-      if (typeof this.addDependency === "function") this.addDependency(OVERLAY);
       inserts.push({ at: node.closingElement.start, text: overlayTag(opts.endpoint, opts.token) });
     }
     if (node.type !== "JSXOpeningElement") return;

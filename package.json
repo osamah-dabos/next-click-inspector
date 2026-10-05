@@ -1,6 +1,6 @@
 {
   "name": "next-click-inspector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Click any element in your Next.js app to see the file, line and code that rendered it, and open it in your editor. Like the Nuxt DevTools inspector.",
   "license": "MIT",
   "author": "Osamah (https://github.com/osamah-dabos)",

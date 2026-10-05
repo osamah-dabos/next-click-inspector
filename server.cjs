@@ -8,6 +8,7 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 
 const CONTEXT = 12;
+const OVERLAY = path.join(__dirname, "overlay.js");
 
 function machineSecret() {
   const file = path.join(os.homedir(), ".next-click-inspector-secret");
@@ -69,6 +70,21 @@ function start(root, preferredPort) {
         const startLine = Math.max(1, line - CONTEXT);
         const end = Math.min(lines.length, line + CONTEXT);
         send(res, 200, { absPath: abs, start: startLine, lines: lines.slice(startLine - 1, end) });
+      });
+      return;
+    }
+
+    // The overlay is served as an external script (not inlined into the layout)
+    // because React 19 warns about inline <script> tags rendered by components.
+    if (req.method === "GET" && url.pathname === "/overlay.js") {
+      fs.readFile(OVERLAY, "utf8", (err, src) => {
+        if (err) return send(res, 500, { error: "Overlay missing" });
+        res.writeHead(200, {
+          "Content-Type": "application/javascript; charset=utf-8",
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "no-store",
+        });
+        res.end(`window.__DEV_INSPECTOR__=${JSON.stringify({ endpoint: info.endpoint, token })};\n${src}`);
       });
       return;
     }
